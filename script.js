@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const viewsCountElement = document.getElementById('views-count');
 
     async function handleViewsCounter() {
+        // REVENIT LA CODUL INIȚIAL: Folosim sessionStorage
         const hasVisitedThisSession = sessionStorage.getItem('has_visited');
         
         const headers = {
