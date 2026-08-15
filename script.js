@@ -40,13 +40,27 @@ document.addEventListener('DOMContentLoaded', () => {
     const toPage1Buttons = document.querySelectorAll('.btn-prev-p1');
     const toPage2BackButtons = document.querySelectorAll('.btn-prev-p2');
 
+    // Funcție optimizată special pentru iPhone / Safari
     const smartScroll = (targetElement) => {
         if (!targetElement) return;
-        if (window.innerWidth <= 768) {
-            targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        } else {
-            targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+        // Calculăm poziția exactă a elementului în pagină
+        const elementTop = targetElement.getBoundingClientRect().top;
+        const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+        let targetPosition = elementTop + currentScroll;
+
+        // Păstrăm logica ta de poziționare pe ecran (centrat pe desktop, sus pe mobil)
+        if (window.innerWidth > 768) {
+            const elementHeight = targetElement.offsetHeight;
+            const windowHeight = window.innerHeight;
+            targetPosition = targetPosition - (windowHeight / 2) + (elementHeight / 2);
         }
+
+        // Executăm scroll-ul fluid stabil pe iOS
+        window.scrollTo({
+            top: targetPosition,
+            behavior: 'smooth'
+        });
     };
 
     toPage2Buttons.forEach(btn => btn.addEventListener('click', () => smartScroll(sec2)));
