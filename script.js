@@ -5,12 +5,20 @@ const SUPABASE_ANON_KEY = "sb_publishable_cUhrn5DS2KD7pzpzpSMv0A_dJ7v7tZC";
 document.addEventListener('DOMContentLoaded', () => {
     
     // ==========================================================================
-    // 2. LOGICĂ CONTOR VIZUALIZĂRI (CU ÎNTÂRZIERE DE 3 SECUNDE ȘI RPC)
+    // MODIFICARE SPECIALĂ PENTRU SAFARI (Păstrează sesiunea activă la refresh)
+    // ==========================================================================
+    if (localStorage.getItem('safari_session_fix')) {
+        sessionStorage.setItem('has_visited', 'true');
+    }
+
+    // ==========================================================================
+    // 2. LOGICĂ CONTOR VIZUALIZĂRI (CODUL TĂU INIȚIAL + REPARAȚIE CITIRE SAFARI)
     // ==========================================================================
     const viewsCountElement = document.getElementById('views-count');
 
     async function handleViewsCounter() {
-        // REVENIT LA CODUL INIȚIAL: Folosim sessionStorage
+        if (!viewsCountElement) return;
+
         const hasVisitedThisSession = sessionStorage.getItem('has_visited');
         
         const headers = {
@@ -23,20 +31,21 @@ document.addEventListener('DOMContentLoaded', () => {
             // AȘTEPTĂM EXACT 3 SECUNDE (3000 ms) înainte de a rula logica
             await new Promise(resolve => setTimeout(resolve, 3000));
 
-            // Pasul A: Dacă este o deschidere nouă în sesiune, apelăm funcția Stored Procedure din server
+            // Pasul A: Dacă este o deschidere nouă în sesiune, apelăm funcția din server
             if (!hasVisitedThisSession) {
                 const responseIncrement = await fetch(`${SUPABASE_URL}/rest/v1/rpc/increment_views`, {
                     method: 'POST',
                     headers: headers,
-                    body: JSON.stringify({}) // Trimitem un obiect gol, funcția știe ce are de făcut pe server
+                    body: JSON.stringify({})
                 });
 
                 if (responseIncrement.ok) {
                     sessionStorage.setItem('has_visited', 'true');
+                    localStorage.setItem('safari_session_fix', 'true');
                 }
             }
 
-            // O mică pauză tehnică de siguranță (100 milisecunde) pentru a asigura sincronizarea bazei de date
+            // O mică pauză tehnică de siguranță (100 milisecunde)
             await new Promise(resolve => setTimeout(resolve, 100));
 
             // Pasul B: Citim valoarea finală actualizată din baza de date
@@ -48,14 +57,15 @@ document.addEventListener('DOMContentLoaded', () => {
             if (responseData.ok) {
                 const data = await responseData.json();
                 
-                if (data && data.length > 0) {
-                    // Verificăm dacă valoarea citită este 0. Dacă serverul a întârziat, afișăm direct 1 ca plasă de siguranță
+                // REPARAȚIE SAFARI: Verificăm sigur dacă lista are elemente și extragem corect valoarea
+                if (data && data.length > 0 && data[0] && data[0].count_value !== undefined) {
                     const finalCount = parseInt(data[0].count_value);
                     viewsCountElement.textContent = finalCount === 0 ? "1" : finalCount;
                 } else {
                     viewsCountElement.textContent = "1";
                 }
             } else {
+                // Dacă serverul a dat eroare (ex: CORS pe localhost), punem o valoare de test ca să știi
                 viewsCountElement.textContent = "1";
             }
 
@@ -64,10 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
             viewsCountElement.textContent = "1";
         } finally {
             // Forțăm eliminarea animației de încărcare și afișăm numărul corect pe ecran
-            if (viewsCountElement) {
-                viewsCountElement.className = "loaded";
-                viewsCountElement.style.opacity = "1";
-            }
+            viewsCountElement.className = "loaded";
+            viewsCountElement.style.opacity = "1";
         }
     }
 
@@ -87,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const toPage2BackButtons = document.querySelectorAll('.btn-prev-p2');
 
     const smartScroll = (targetElement) => {
+        if (!targetElement) return;
         if (window.innerWidth <= 768) {
             targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
