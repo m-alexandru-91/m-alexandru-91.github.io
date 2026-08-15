@@ -40,27 +40,39 @@ document.addEventListener('DOMContentLoaded', () => {
     const toPage1Buttons = document.querySelectorAll('.btn-prev-p1');
     const toPage2BackButtons = document.querySelectorAll('.btn-prev-p2');
 
-    // Funcție optimizată special pentru iPhone / Safari
+    // Identificăm containerul care are efectul de magnet (scroll-snap)
+    // De obicei este HTML, BODY sau un container mare gen '.main-container'
+    const scrollContainer = document.documentElement || document.body;
+
     const smartScroll = (targetElement) => {
         if (!targetElement) return;
 
-        // Calculăm poziția exactă a elementului în pagină
+        // Pasul 1: Dezactivăm temporar magnetul CSS ca să nu blocheze Safari
+        const originalSnap = window.getComputedStyle(scrollContainer).scrollSnapType;
+        scrollContainer.style.scrollSnapType = 'none';
+
+        // Pasul 2: Calculăm poziția exactă
         const elementTop = targetElement.getBoundingClientRect().top;
         const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
         let targetPosition = elementTop + currentScroll;
 
-        // Păstrăm logica ta de poziționare pe ecran (centrat pe desktop, sus pe mobil)
+        // Poziționare pe desktop vs mobil
         if (window.innerWidth > 768) {
             const elementHeight = targetElement.offsetHeight;
             const windowHeight = window.innerHeight;
             targetPosition = targetPosition - (windowHeight / 2) + (elementHeight / 2);
         }
 
-        // Executăm scroll-ul fluid stabil pe iOS
+        // Pasul 3: Executăm scroll-ul fluid stabil
         window.scrollTo({
             top: targetPosition,
             behavior: 'smooth'
         });
+
+        // Pasul 4: Reactivăm magnetul DOAR după ce s-a terminat animația (500ms)
+        setTimeout(() => {
+            scrollContainer.style.scrollSnapType = originalSnap;
+        }, 500);
     };
 
     toPage2Buttons.forEach(btn => btn.addEventListener('click', () => smartScroll(sec2)));
