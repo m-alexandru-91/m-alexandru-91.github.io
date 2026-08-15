@@ -1,0 +1,49 @@
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+    --blue-light: #E3F2FD;
+    --blue-official: #1976D2;
+    --blue-dark: #0D1B2A;
+    --blue-shadow: #BBDEFB;
+    --sheet-white: #FFFFFF;
+    --bar-height: 70px;
+}
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--blue-light); color: var(--blue-dark);
+    min-height: 100vh; overflow: hidden;
+}
+.bar-system {
+    height: var(--bar-height); background-color: var(--sheet-white); width: 100%;
+    display: flex; justify-content: center; align-items: center; position: fixed; left: 0; z-index: 1000;
+}
+.main-header { top: 0; padding-top: env(safe-area-inset-top, 0px); height: calc(var(--bar-height) + env(safe-area-inset-top, 0px)); }
+.main-footer { bottom: 0; padding-bottom: env(safe-area-inset-bottom, 0px); height: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px)); font-size: 0.85rem; font-weight: 600; }
+.avatar-white-circle { width: 48px; height: 48px; background-color: var(--sheet-white); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(13, 27, 42, 0.08); }
+.avatar-container { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; }
+.avatar { width: 100%; height: 100%; object-fit: cover; }
+.scroll-container { width: 100%; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
+.scroll-container::-webkit-scrollbar { width: 0px; background: transparent; }
+.snap-section { width: 100%; height: 100vh; scroll-snap-align: start; display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative; padding-top: calc(var(--bar-height) + env(safe-area-inset-top, 0px)); padding-bottom: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px)); }
+.a4-sheet { background-color: var(--sheet-white); width: 550px; height: 778px; position: relative; box-shadow: 12px 12px 0px var(--blue-shadow); border: 2px solid var(--blue-dark); flex-shrink: 0; }
+.left-circle-bulb { position: absolute; left: -32px; top: 50%; transform: translateY(-50%); width: 65px; height: 65px; background-color: var(--sheet-white); border-radius: 50%; border: 2px solid var(--blue-dark); display: flex; justify-content: center; align-items: center; box-shadow: 4px 4px 0px var(--blue-shadow); z-index: 10; cursor: pointer; }
+.complete-lightbulb-svg { width: 65%; height: 65%; display: block; }
+.scroll-indicator { position: absolute; bottom: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px) + 15px); width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 20; }
+.arrow-svg { width: 100%; height: 100%; }
+.a4-internal-content { padding: 50px 45px; height: 100%; display: flex; flex-direction: column; justify-content: flex-start; }
+.profile-title { font-size: 1.5rem; margin-bottom: 5px; font-weight: 800; letter-spacing: -0.5px; }
+.occupation-section { margin-bottom: 25px; font-size: 0.95rem; line-height: 1.4; border-bottom: 1px dashed rgba(13, 27, 42, 0.15); padding-bottom: 10px; }
+.bio-text { font-size: 1.05rem; line-height: 1.6; margin-bottom: 15px; color: #111111; text-align: justify; }
+.bottom-document-zone { margin-top: auto; display: flex; flex-direction: column; gap: 20px; }
+.signature-section { font-size: 0.95rem; line-height: 1.5; }
+.signature-name { font-style: italic; color: #2D3748; margin-top: 2px; }
+.minimal-circle-icon { width: 65px; height: 65px; background-color: var(--sheet-white); border-radius: 50%; border: 2px solid var(--blue-dark); display: flex; justify-content: center; align-items: center; box-shadow: 4px 4px 0px var(--blue-shadow); cursor: pointer; }
+.nib-svg, .stamp-svg { width: 65%; height: 65%; display: block; }
+@media (max-width: 768px) {
+    .scroll-container { scroll-snap-type: none; overflow-y: auto; }
+    .snap-section { height: auto; padding: 100px 15px 40px 15px; }
+    .a4-sheet { width: 100%; height: auto; }
+    .left-circle-bulb { position: relative; left: 0; top: 0; transform: none; margin: 0 auto 20px auto; width: 60px; height: 60px; }
+    .scroll-indicator { position: relative; bottom: 0; margin: 20px auto 0 auto; }
+    .a4-internal-content { padding: 25px 20px; }
+    .profile-title { font-size: 1.3rem; }
+}
