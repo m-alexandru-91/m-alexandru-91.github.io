@@ -1,4 +1,12 @@
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* ==========================================================================
+   1. RESETĂRI GLOBALE ȘI CONFIGURARE VARIABILE
+   ========================================================================== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 :root {
     --blue-light: #E3F2FD;
     --blue-official: #1976D2;
@@ -7,74 +15,344 @@
     --sheet-white: #FFFFFF;
     --bar-height: 70px;
 }
+
 body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background-color: var(--blue-light); color: var(--blue-dark);
-    min-height: 100vh; overflow: hidden;
+    background-color: var(--blue-light);
+    color: var(--blue-dark);
+    min-height: 100vh;
+    overflow: hidden;
 }
-.bar-system {
-    height: var(--bar-height); background-color: var(--sheet-white); width: 100%;
-    display: flex; justify-content: center; align-items: center; position: fixed; left: 0; z-index: 1000;
-}
-.main-header { top: 0; padding-top: env(safe-area-inset-top, 0px); height: calc(var(--bar-height) + env(safe-area-inset-top, 0px)); }
-.main-footer { bottom: 0; padding-bottom: env(safe-area-inset-bottom, 0px); height: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px)); font-size: 0.85rem; font-weight: 600; }
-.avatar-white-circle { width: 48px; height: 48px; background-color: var(--sheet-white); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 2px 6px rgba(13, 27, 42, 0.08); }
-.avatar-container { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; }
-.avatar { width: 100%; height: 100%; object-fit: cover; }
 
-.scroll-container { width: 100%; height: 100vh; overflow-y: scroll; scroll-snap-type: y mandatory; scroll-behavior: smooth; }
-.scroll-container::-webkit-scrollbar { width: 0px; background: transparent; }
+/* ==========================================================================
+   2. BARELE DE SISTEM (HEADER & FOOTER)
+   ========================================================================== */
+.bar-system {
+    height: var(--bar-height);
+    background-color: var(--sheet-white);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    left: 0;
+    z-index: 1000;
+}
+
+.main-header {
+    top: 0;
+    padding-top: env(safe-area-inset-top, 0px);
+    height: calc(var(--bar-height) + env(safe-area-inset-top, 0px));
+    display: flex;
+    justify-content: center; /* Păstrează avatarul perfect pe mijlocul ecranului */
+    align-items: center;
+}
+
+.main-footer {
+    bottom: 0;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    height: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px));
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   3. AVATARUL UTILIZATORULUI
+   ========================================================================== */
+.avatar-white-circle {
+    width: 48px;
+    height: 48px;
+    background-color: var(--sheet-white);
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(13, 27, 42, 0.08);
+}
+
+.avatar-container {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    overflow: hidden;
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ==========================================================================
+   4. POZIȚIONARE ȘI ANIMAȚIE CONTOR VIZUALIZĂRI (COUNTER VIEW)
+   ========================================================================== */
+.views-container {
+    position: absolute;
+    right: 25px; /* Împinge elementul fix în colțul din dreapta sus */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--blue-dark);
+    background-color: var(--blue-light);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 2px solid var(--blue-dark);
+}
+
+.eye-icon {
+    width: 18px;
+    height: 18px;
+    color: var(--blue-official);
+    display: block;
+}
+
+/* Aplică animația de tip puls pentru punctele de încărcare */
+#views-count {
+    display: inline-block;
+    animation: pulseLoading 1.5s infinite ease-in-out;
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Când JavaScript pune cifra în element, eliminăm opacitatea redusă */
+#views-count.loaded {
+    animation: fadeInNumber 0.5s forwards ease-out;
+}
+
+/* ==========================================================================
+   5. STRUCTURĂ SCROLL ȘI SECȚIUNI (SNAP SECTIONS)
+   ========================================================================== */
+.scroll-container {
+    width: 100%;
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    scroll-behavior: smooth;
+}
+
+.scroll-container::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
 
 .snap-section {
-    width: 100%; height: 100vh; scroll-snap-align: start;
-    display: flex; flex-direction: column; justify-content: center; align-items: center; position: relative;
+    width: 100%;
+    height: 100vh;
+    scroll-snap-align: start;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative;
     padding-top: calc(var(--bar-height) + env(safe-area-inset-top, 0px));
     padding-bottom: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px));
 }
 
-/* Coala A4 - Containerul de referință absolută */
+/* ==========================================================================
+   6. CONTAINERUL COALĂ A4
+   ========================================================================== */
 .a4-sheet {
-    background-color: var(--sheet-white); width: 550px; height: 778px;
-    position: relative; box-shadow: 12px 12px 0px var(--blue-shadow); border: 2px solid var(--blue-dark); flex-shrink: 0;
+    background-color: var(--sheet-white);
+    width: 550px;
+    height: 778px;
+    position: relative;
+    box-shadow: 12px 12px 0px var(--blue-shadow);
+    border: 2px solid var(--blue-dark);
+    flex-shrink: 0;
 }
 
-/* FIX PENTRU IPHONE: Becul rămâne lipit pe axa din stânga indiferent de rezoluție */
+/* ==========================================================================
+   7. ELEMENTE GRAFICE INTERACTIVE (BEC ȘI STRUCTURI ABSOLUTE)
+   ========================================================================== */
 .left-circle-bulb {
-    position: absolute; left: -32px; top: 50%; transform: translateY(-50%);
-    width: 65px; height: 65px; background-color: var(--sheet-white);
-    border-radius: 50%; border: 2px solid var(--blue-dark);
-    display: flex; justify-content: center; align-items: center; box-shadow: 4px 4px 0px var(--blue-shadow); z-index: 10; cursor: pointer;
+    position: absolute;
+    left: -32px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 65px;
+    height: 65px;
+    background-color: var(--sheet-white);
+    border-radius: 50%;
+    border: 2px solid var(--blue-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 4px 4px 0px var(--blue-shadow);
+    z-index: 10;
+    cursor: pointer;
 }
-.complete-lightbulb-svg { width: 65%; height: 65%; display: block; }
 
-/* FIX PENTRU IPHONE: Cercul de jos rămâne centrat pe linia de fund a foii A4 */
+.complete-lightbulb-svg {
+    width: 65%;
+    height: 65%;
+    display: block;
+}
+
 .minimal-circle-icon {
-    position: absolute; bottom: -32px; left: 50%; transform: translateX(-50%);
-    width: 65px; height: 65px; background-color: var(--sheet-white);
-    border-radius: 50%; border: 2px solid var(--blue-dark);
-    display: flex; justify-content: center; align-items: center; box-shadow: 4px 4px 0px var(--blue-shadow); z-index: 10; cursor: pointer;
+    position: absolute;
+    bottom: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 65px;
+    height: 65px;
+    background-color: var(--sheet-white);
+    border-radius: 50%;
+    border: 2px solid var(--blue-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 4px 4px 0px var(--blue-shadow);
+    z-index: 10;
+    cursor: pointer;
 }
-.nib-svg, .stamp-svg { width: 65%; height: 65%; display: block; }
 
-.scroll-indicator { position: absolute; bottom: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px) + 5px); width: 40px; height: 40px; display: flex; justify-content: center; align-items: center; cursor: pointer; z-index: 20; }
-.arrow-svg { width: 100%; height: 100%; }
+.nib-svg, .stamp-svg {
+    width: 65%;
+    height: 65%;
+    display: block;
+}
 
-.a4-internal-content { padding: 55px 45px; height: 100%; display: flex; flex-direction: column; justify-content: flex-start; }
-.profile-title { font-size: 1.5rem; margin-bottom: 5px; font-weight: 800; letter-spacing: -0.5px; }
-.occupation-section { margin-bottom: 25px; font-size: 0.95rem; line-height: 1.4; border-bottom: 1px dashed rgba(13, 27, 42, 0.15); padding-bottom: 10px; }
-.bio-text { font-size: 1.05rem; line-height: 1.6; margin-bottom: 15px; color: #111111; text-align: justify; }
-.bottom-document-zone { margin-top: auto; display: flex; flex-direction: column; gap: 5px; }
-.signature-section { font-size: 0.95rem; line-height: 1.5; padding-bottom: 10px; }
-.signature-name { font-style: italic; color: #2D3748; margin-top: 2px; }
+.scroll-indicator {
+    position: absolute;
+    bottom: calc(var(--bar-height) + env(safe-area-inset-bottom, 0px) + 5px);
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 20;
+}
 
-/* Adaptabilitate mobilă fluidă pe iPhone */
+.arrow-svg {
+    width: 100%;
+    height: 100%;
+}
+
+/* ==========================================================================
+   8. CONȚINUT INTERN ȘI TIPOGRAFIE FOAIE
+   ========================================================================== */
+.a4-internal-content {
+    padding: 55px 45px;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.profile-title {
+    font-size: 1.5rem;
+    margin-bottom: 5px;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+}
+
+.occupation-section {
+    margin-bottom: 25px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    border-bottom: 1px dashed rgba(13, 27, 42, 0.15);
+    padding-bottom: 10px;
+}
+
+.bio-text {
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #111111;
+    text-align: justify;
+}
+
+.bottom-document-zone {
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.signature-section {
+    font-size: 0.95rem;
+    line-height: 1.5;
+    padding-bottom: 10px;
+}
+
+.signature-name {
+    font-style: italic;
+    color: #2D3748;
+    margin-top: 2px;
+}
+
+/* ==========================================================================
+   9. EFECTE ȘI KEYFRAMES PENTRU ANIMAȚII
+   ========================================================================== */
+/* Clipirea textului "..." în timpul celor 3 secunde */
+@keyframes pulseLoading {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+/* Tranziția fină tip fade-in când apare numărul final */
+@keyframes fadeInNumber {
+    0% { opacity: 0; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+/* ==========================================================================
+   10. ADAPTABILITATE MOBILĂ FLUIDĂ (IPHONE / ANDROID)
+   ========================================================================== */
 @media (max-width: 768px) {
-    .scroll-container { scroll-snap-type: none; overflow-y: auto; }
-    .snap-section { height: auto; padding: calc(var(--bar-height) + 40px) 20px 60px 20px; }
-    .a4-sheet { width: 100%; height: auto; box-shadow: 8px 8px 0px var(--blue-shadow); }
-    .a4-internal-content { padding: 40px 20px; }
-    .left-circle-bulb { left: -15px; width: 50px; height: 50px; }
-    .minimal-circle-icon { bottom: -25px; width: 50px; height: 50px; }
-    .scroll-indicator { position: relative; bottom: auto; margin-top: 40px; }
-    .profile-title { font-size: 1.3rem; }
+    .scroll-container {
+        scroll-snap-type: none;
+        overflow-y: auto;
+        height: auto;
+    }
+    
+    .snap-section {
+        height: auto;
+        padding: calc(var(--bar-height) + 20px) 15px 40px 15px;
+    }
+    
+    .a4-sheet {
+        width: 100%;
+        height: auto;
+        box-shadow: 6px 6px 0px var(--blue-shadow);
+        margin-bottom: 30px;
+    }
+    
+    .a4-internal-content {
+        padding: 35px 20px;
+    }
+    
+    .left-circle-bulb {
+        left: -10px;
+        width: 45px;
+        height: 45px;
+    }
+    
+    .minimal-circle-icon {
+        position: relative;
+        bottom: -15px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 50px;
+        height: 50px;
+        margin-top: 15px;
+    }
+    
+    .profile-title {
+        font-size: 1.25rem;
+    }
+    
+    .bio-text {
+        font-size: 0.95rem;
+    }
+    
+    /* Poziționarea contorului pe telefoanele mobile */
+    .views-container {
+        right: 15px;
+        padding: 5px 12px;
+        font-size: 0.85rem;
+    }
 }
